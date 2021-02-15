@@ -1,25 +1,42 @@
+import React, {Component} from 'react';
+import {Cardlist} from './components/cardlist/cardlist.component';
+import {SearchBox} from './components/searchBox/searchBox.component'
 import logo from './logo.svg';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor(){
+    super();
+    this.state={
+      monisters:[],
+      searchFeald:''
+    }
+  }
+  componentDidMount(){
+    fetch('https://jsonplaceholder.typicode.com/users').then(responce=>responce.json()).then(
+      (data)=>{
+        console.log(data);
+        this.setState({monisters:data})
+      }
+    ).catch()
+  }
+  onChangeHandeler = (e)=>{
+    this.setState({searchFeald:e.target.value} ); console.log('e.target.value', e.target.value)
+  }
+  
+  render(){
+    const {monisters,searchFeald }= this.state;
+    const filterdMonisters =  monisters.filter((monister)=>monister.name.toLowerCase().includes(searchFeald.toLocaleLowerCase())
+    )
+    return (
+
+      <div className="App">
+      <h1>Monisters</h1>
+        <SearchBox onChangeHandeler={this.onChangeHandeler} placeholder="Search Monisters" />
+        <Cardlist monisters={filterdMonisters} />
+      </div>
+    );
+  }
 }
 
 export default App;
